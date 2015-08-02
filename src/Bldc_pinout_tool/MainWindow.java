@@ -5,6 +5,23 @@
  */
 package Bldc_pinout_tool;
 
+import java.awt.GridBagConstraints;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 /**
  *
  * @author Escritorio
@@ -14,8 +31,50 @@ public class MainWindow extends javax.swing.JFrame {
     /**
      * Creates new form MainWindow
      */
-    public MainWindow() {
+    private NodeList deviceset;
+//    private ArrayList<String> packages;
+    private Element docElements;
+    public MainWindow() throws SAXException, IOException, ParserConfigurationException
+    {
         initComponents();
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setValidating(false);
+        dbf.setNamespaceAware(true);
+        dbf.setFeature("http://xml.org/sax/features/namespaces", false);
+        dbf.setFeature("http://xml.org/sax/features/validation", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document dom = db.parse("microchip_dsPIC33FJ128MC802.lbr");
+
+        docElements = dom.getDocumentElement();        
+        deviceset = docElements.getElementsByTagName("deviceset");
+
+        IC_Selector.removeAllItems();
+        //busca todos los integrados de la libreria y los carga en el comboBox
+//        String devname = null;
+        for( int dev=0 ; dev<deviceset.getLength() ; dev++ )
+            for( int i=0 ; i<deviceset.item(dev).getAttributes().getLength() ; i++)
+                if( deviceset.item(dev).getAttributes().item(i).getNodeName().equals("name") )
+                {
+//                    devname = deviceset.item(dev).getAttributes().item(i).getNodeValue();
+                    IC_Selector.addItem(deviceset.item(dev).getAttributes().item(i).getNodeValue());
+                    break;
+                }
+        
+        
+        //cambia Look&Feel a "nimbus" (mas lindo que el "metalico" por defecto)
+        try
+        {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        }
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+        {
+            Logger.getLogger(MainWindowV1.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SwingUtilities.updateComponentTreeUI(this);
+        pack();
     }
 
     /**
@@ -28,34 +87,146 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        Image = new javax.swing.JLabel();
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        IC_Selector = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        PKG_Selector = new javax.swing.JComboBox();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        MenuFile = new javax.swing.JMenu();
+        MenuFile_Load = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
-        layout.columnWidths = new int[] {0};
-        layout.rowHeights = new int[] {0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0};
-        getContentPane().setLayout(layout);
+        java.awt.GridBagLayout layout1 = new java.awt.GridBagLayout();
+        layout1.columnWidths = new int[] {0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0};
+        layout1.rowHeights = new int[] {0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0};
+        getContentPane().setLayout(layout1);
 
-        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createCompoundBorder());
+        IC_Selector.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "none" }));
+        IC_Selector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IC_SelectorActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        getContentPane().add(IC_Selector, gridBagConstraints);
 
-        Image.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Bldc_pinout_tool/dsPIC_Pinout1.png"))); // NOI18N
-        jScrollPane1.setViewportView(Image);
-
+        jLabel1.setText("Select Component:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 484;
-        gridBagConstraints.ipady = 398;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(11, 10, 29, 13);
-        getContentPane().add(jScrollPane1, gridBagConstraints);
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 0);
+        getContentPane().add(jLabel1, gridBagConstraints);
+
+        jLabel2.setText("Select Package:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 0);
+        getContentPane().add(jLabel2, gridBagConstraints);
+
+        PKG_Selector.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "none" }));
+        PKG_Selector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PKG_SelectorActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        getContentPane().add(PKG_Selector, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(jTextField1, gridBagConstraints);
+
+        jLabel3.setText("Search:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        getContentPane().add(jLabel3, gridBagConstraints);
+
+        jButton1.setText("Search");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        getContentPane().add(jButton1, gridBagConstraints);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 14;
+        gridBagConstraints.gridy = 4;
+        getContentPane().add(jComboBox1, gridBagConstraints);
+
+        MenuFile.setText("File");
+
+        MenuFile_Load.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        MenuFile_Load.setText("Load config");
+        MenuFile_Load.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuFile_LoadActionPerformed(evt);
+            }
+        });
+        MenuFile.add(MenuFile_Load);
+
+        jMenuBar1.add(MenuFile);
+
+        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void MenuFile_LoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuFile_LoadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuFile_LoadActionPerformed
+
+    private void IC_SelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IC_SelectorActionPerformed
+        // TODO add your handling code here:
+        //busca los package disponibles para el integrado y los guarda en packages
+        int device = IC_Selector.getSelectedIndex();
+        if( device < 0 )
+            return;
+        PKG_Selector.removeAllItems();
+        ArrayList<String> packages = new ArrayList();
+        for( int i=0 ; i<deviceset.item(device).getChildNodes().getLength() ; i++)
+            for( int j=0 ; j<deviceset.item(device).getChildNodes().item(i).getChildNodes().getLength() ; j++)
+                if( deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getNodeName().equals("device") )
+                {
+                    //packages_count indica la cantidad de packages disponibles para este integrado
+                    for( int k=0 ; k<deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().getLength() ; k++ )
+                        if( deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeName().equals("package") )
+                        {
+//                            System.out.println(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeName());
+//                            System.out.println(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeValue());
+//                            packages.add(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeValue());
+                            boolean pkg_exist = false;
+                            for( int l=0 ; l<PKG_Selector.getItemCount() ; l++ )
+                                if( PKG_Selector.getItemAt(l).equals(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeValue()) )
+                                {
+                                    pkg_exist = true;
+                                    break;
+                                }
+                            if( pkg_exist == false )
+                                PKG_Selector.addItem(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeValue());
+                        }
+                }
+    }//GEN-LAST:event_IC_SelectorActionPerformed
+
+    private void PKG_SelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PKG_SelectorActionPerformed
+        // TODO add your handling code here:
+        System.out.println("PKG_Selector action performed called");
+    }//GEN-LAST:event_PKG_SelectorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -87,13 +258,32 @@ public class MainWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainWindow().setVisible(true);
+                try {
+                    new MainWindow().setVisible(true);
+                } catch (SAXException ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ParserConfigurationException ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Image;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JComboBox IC_Selector;
+    private javax.swing.JMenu MenuFile;
+    private javax.swing.JMenuItem MenuFile_Load;
+    private javax.swing.JComboBox PKG_Selector;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

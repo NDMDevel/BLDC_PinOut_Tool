@@ -98,6 +98,7 @@ public class MainWindowV1 extends javax.swing.JFrame {
         jTextField30 = new javax.swing.JTextField();
         jTextField27 = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
+        IC_Selector = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -591,6 +592,13 @@ public class MainWindowV1 extends javax.swing.JFrame {
         gridBagConstraints.ipadx = 8;
         getContentPane().add(jButton2, gridBagConstraints);
 
+        IC_Selector.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(IC_Selector, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -720,6 +728,7 @@ pack();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox IC_Selector;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBox1;

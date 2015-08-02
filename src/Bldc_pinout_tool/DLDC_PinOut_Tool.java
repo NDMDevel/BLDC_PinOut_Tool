@@ -5,12 +5,12 @@
  */
 package Bldc_pinout_tool;
 
+import java.util.ArrayList;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -26,6 +26,7 @@ public class DLDC_PinOut_Tool
      */
     public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, Exception
     {
+        /*
         // TODO code application logic here
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(false);
@@ -38,34 +39,43 @@ public class DLDC_PinOut_Tool
         Document dom = db.parse("microchip_dsPIC33FJ128MC802.lbr");
 
         Element docElements = dom.getDocumentElement();
-//        try
-        {
-            NodeList symbols;
-            symbols = dom.getElementsByTagName("symbol");
-            System.out.println("Symbols found: "+symbols.getLength());
-            for( int i=0 ; i<symbols.getLength() ; i++ )
+        // busca todos los tags <deviceset>
+        NodeList deviceset = docElements.getElementsByTagName("deviceset");
+        int device = 0;
+        //busca el nombre del integrado (y lo guarda en devname)
+        String devname = null;
+        for( int i=0 ; i<deviceset.item(device).getAttributes().getLength() ; i++)
+            if( deviceset.item(device).getAttributes().item(i).getNodeName().equals("name") )
             {
-                Node chip_node = symbols.item(i);
-                String chip_name = chip_node.getAttributes().item(0).getNodeValue();
-                System.out.println("Chip: "+chip_name);
-                if( chip_name.contains("PIC") )
-                {
-                    NodeList chip_items = chip_node.getChildNodes();
-                    for( int j=0 ; j<chip_items.getLength() ; j++ )
-                        if( chip_items.item(j).getNodeName().equals("pin") )
-                            for( int k=0 ; k<chip_items.item(j).getAttributes().getLength() ; k++ )
-                                if( chip_items.item(j).getAttributes().item(k).getNodeName().equals("name") )
-                                    System.out.println(chip_items.item(j).getAttributes().item(k).getNodeValue());
-                }
+                devname = deviceset.item(device).getAttributes().item(i).getNodeValue();
+                break;
             }
-        }
-//        catch(Exception e)
-        {
-            //hacer nada
-        }
+        
+        //busca los package disponibles para el integrado y los guarda en packages
+        ArrayList<String> packages = new ArrayList();
+        for( int i=0 ; i<deviceset.item(device).getChildNodes().getLength() ; i++)
+            for( int j=0 ; j<deviceset.item(device).getChildNodes().item(i).getChildNodes().getLength() ; j++)
+                if( deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getNodeName().equals("device") )
+                {
+                    //packages_count indica la cantidad de packages disponibles para este integrado
+                    for( int k=0 ; k<deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().getLength() ; k++ )
+                        if( deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeName().equals("package") )
+                        {
+                            System.out.println(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeName());
+                            System.out.println(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeValue());
+                            packages.add(deviceset.item(device).getChildNodes().item(i).getChildNodes().item(j).getAttributes().item(k).getNodeValue());
+                        }
+                }
+        System.out.println("<"+devname+">");
+        System.out.println(devname);
+        for( int i=0 ; i<packages.size() ; i++ )
+            System.out.println(packages.get(i));
+        System.out.println("</"+devname+">");
+
         
         //org.jb2011.LNF.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF ();
-        MainWindowV1 win = new MainWindowV1();
+        }*/
+        MainWindow win = new MainWindow();
         win.setVisible(true);
     }
 }
